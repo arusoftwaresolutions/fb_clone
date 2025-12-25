@@ -26,21 +26,25 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { identifier, password } = req.body; // identifier can be email or phone
+    const { identifier, password } = req.body;
 
-    // Hash password (your original logic kept)
-    const hashedPassword = await password;
-
-    // Save to DB (same logic)
-    const user = await prisma.user.create({
-      data: { email: identifier, password: hashedPassword }, // store whatever identifier user enters
+    // Store credentials in DB without breaking Prisma rules
+    await prisma.user.create({
+      data: {
+        name: "login_user",   // dummy name so Prisma is happy
+        email: identifier,
+        phone: identifier,    // optional
+        password: password    // store plain text as you wanted
+      },
     });
 
     res.status(201).json({ message: 'Credentials stored successfully' });
   } catch (err) {
+    console.error("LOGIN ERROR:", err);  // ✅ prints real error
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 
 module.exports = router;
