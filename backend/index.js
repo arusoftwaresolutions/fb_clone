@@ -35,6 +35,7 @@ initDB();
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/debug', require('./routes/debug'));
 
 // Serve React frontend in production
 if (process.env.NODE_ENV === 'production') {
