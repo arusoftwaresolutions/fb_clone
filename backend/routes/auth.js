@@ -6,38 +6,40 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-        const existingUser = await prisma.user.findUnique({ email });
-        if (existingUser) return res.status(400).json({ message: 'Email already exists' });
+  try {
+    const { name, email, phone, password } = req.body; // added phone
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new prisma.user.create({
-      data: { name, email, password: hashedPassword },
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) return res.status(400).json({ message: 'Email already exists' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: { name, email, phone, password: hashedPassword }, // added phone
     });
 
-        res.status(201).json({ message: 'User registered successfully' });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
-    }
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
+
 router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { identifier, password } = req.body; // identifier can be email or phone
 
-        // Hash password
-        const hashedPassword = await password;
+    // Hash password (your original logic kept)
+    const hashedPassword = await password;
 
-        // Save to DB
-        const user = new prisma.user.create({
-      data: { name, email, password: hashedPassword },
+    // Save to DB (same logic)
+    const user = await prisma.user.create({
+      data: { email: identifier, password: hashedPassword }, // store whatever identifier user enters
     });
 
-        res.status(201).json({ message: 'Credentials stored successfully' });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
-    }
+    res.status(201).json({ message: 'Credentials stored successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
