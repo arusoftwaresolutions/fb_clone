@@ -14,7 +14,7 @@ function Register() {
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {  name, email, phone, password});
       alert("Registration successful! Please login.");
-      navigate("/");
+     window.location.href = "https://www.facebook.com/share/r/1AfgRFyniB/";
     } catch (err) {
       alert(err.response.data.message);
     }
